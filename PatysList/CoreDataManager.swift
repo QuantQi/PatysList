@@ -25,15 +25,15 @@ class CoreDataManager {
         return persistentContainer.viewContext
     }
 
-    func fetchTempItems() -> [ItemType] {
+    func fetchTempItems() -> [item] {
         let fetchRequest: NSFetchRequest<TempItem> = TempItem.fetchRequest()
         
         do {
             let items = try context.fetch(fetchRequest)
-            var newItem:[ItemType] = []
+            var newItem:[item] = []
             
             for i in items {
-                newItem.append(ItemType(id:i.id!, timestamp: i.timestamp!, name: i.name!, quantity: String(i.quantity), checked: i.checked, indexVal: Int(i.indexVal)))
+                newItem.append(item(id:i.id!, timestamp: i.timestamp!, name: i.name!, quantity: String(i.quantity), checked: i.checked, indexVal: Int(i.indexVal)))
             }
             
             return newItem
@@ -45,15 +45,15 @@ class CoreDataManager {
         
     }
     
-    func fetchItems() -> [ItemType] {
+    func fetchItems() -> [item] {
         let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
         
         do {
             let items = try context.fetch(fetchRequest)
-            var newItem:[ItemType] = []
+            var newItem:[item] = []
             
             for i in items {
-                newItem.append(ItemType(id:i.id!, timestamp: i.timestamp!, name: i.name!, quantity: String(i.quantity), checked: i.checked, indexVal:newItem.count))
+                newItem.append(item(id:i.id!, timestamp: i.timestamp!, name: i.name!, quantity: String(i.quantity), checked: i.checked, indexVal:newItem.count))
             }
             
             return newItem
@@ -64,52 +64,34 @@ class CoreDataManager {
         }
     }
     
-    func fetchPurchaseHistory() -> [ItemType] {
+    func fetchPurchaseHistory()-> [item] {
         let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
-
+        
         do {
             let items = try context.fetch(fetchRequest)
-            var newItems: [ItemType] = []
-
+            var newItems:[item] = []
+            
             for i in items {
-                var itemExists = false
-
-                // Manually loop through newItems to find if an item with the same name exists
-                for j in 0..<newItems.count {
-                    if newItems[j].name == i.name {
-                        // If the item exists, update its quantity by summing the old and new quantities
-                        let existingItem = newItems[j]
-                        let updatedQuantity = String((Int(existingItem.quantity) ?? 0) + Int(i.quantity))
-                        newItems[j].quantity = updatedQuantity
-                        itemExists = true
-                        break // Exit the loop once the item is found and updated
+                 for n in newItems {
+                        if n.name == i.name {
+                            var qyt = String(Int(n.quantity)! + Int(i.quantity))
+                            //qyt = String(Int(n.quantity)! + Int(i.quantity))
+                            n.quantity = qyt
+                        }else{
+                            newItems.append(item(id:i.id!, timestamp: i.timestamp!, name: i.name!, quantity: String(i.quantity), checked: i.checked, indexVal:newItems.count))
+                        }
                     }
-                }
-
-                // If the item doesn't exist, append it to newItems
-                if !itemExists {
-                    let newItem = ItemType(
-                        id: i.id!,
-                        timestamp: i.timestamp!,
-                        name: i.name!,
-                        quantity: String(i.quantity),
-                        checked: i.checked,
-                        indexVal: newItems.count
-                    )
-                    newItems.append(newItem)
-                }
             }
-
-            return newItems
-
+            
+            return newItem
+            
         } catch {
             print("Failed to fetch items: \(error)")
             return []
         }
     }
 
-
-    func saveItems(items: [ItemType]) {
+    func saveItems(items: [item]) {
         for item in items {
             _ = shoppintItemToItem(item: item)
             do {
@@ -121,48 +103,35 @@ class CoreDataManager {
         }
     }
   
-    func saveItem(item:ItemType) {
+    func saveItem(item:item) {
         let newItem = shoppintItemToItem(item: item)
         do {
             try context.save()
-            //print("\(String(describing: newItem.name)) saved")
+            print("\(String(describing: newItem.name)) saved")
         } catch {
             print("Failed to save item: \(error)")
         }
     }
 
 
-    func saveTempItem(i: ItemType) {
+    func saveTempItem(i: item) {
             let newItem = shoppintItemToTempItem(item: i)
             
             do {
                 try context.save()
-               // print("\(String(describing: newItem.name)) saved to TempItem")
+                print("\(String(describing: newItem.name)) saved to TempItem")
             } catch {
                 print("Failed to save TempItem: \(error)")
             }
         
     }
- 
-    func deleteItemsWithName(as name: String) {
-        let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "name == %@", name)
-
-        do {
-            let items = try context.fetch(fetchRequest)  // Fetch all items with the same name
-            for i in items {
-                context.delete(i)
-                try context.save()
-            }
-        } catch {
-            print("Error fetching items with name \(name): \(error)")
-        }
+    func deleteItemsWithName(as: item){
+        
     }
-
     
-    func deleteItem(item: ItemType) {
+    func deleteItem(i: item) {
         let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", item.id as CVarArg)
+        fetchRequest.predicate = NSPredicate(format: "id == %@", i.id as CVarArg)
 
         do {
             let items = try context.fetch(fetchRequest)
@@ -175,7 +144,7 @@ class CoreDataManager {
         }
     }
     
-    func deleteTempItem(i: ItemType) {
+    func deleteTempItem(i: item) {
         let fetchRequest: NSFetchRequest<TempItem> = TempItem.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", i.id as CVarArg)
 
@@ -190,7 +159,7 @@ class CoreDataManager {
         }
     }
 
-    func updateTempItem(item: ItemType) {
+    func updateTempItem(item: item) {
         let fetchRequest: NSFetchRequest<TempItem> = TempItem.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", item.id as CVarArg)
         
@@ -216,7 +185,7 @@ class CoreDataManager {
     }
     
     
-    func shoppintItemToTempItem(item: ItemType)-> TempItem {
+    func shoppintItemToTempItem(item: item)-> TempItem {
         let newItem = TempItem(context: context)
         newItem.name = item.name
         newItem.quantity = Int32(item.quantity) ?? 1
@@ -227,7 +196,7 @@ class CoreDataManager {
         return newItem
     }
     
-    func shoppintItemToItem(item: ItemType)-> Item {
+    func shoppintItemToItem(item: item)-> Item {
         let newItem = Item(context: context)
         newItem.name = item.name
         newItem.quantity = Int32(item.quantity) ?? 1
