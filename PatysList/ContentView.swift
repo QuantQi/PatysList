@@ -22,10 +22,18 @@ struct ContentView: View {
                         .foregroundColor(colorScheme == .dark ? .white : .black) // Adjust text color based on color scheme
                     Spacer()
                     
-                    // TextField for quantity input
-                    TextField("1", text: $quantity)
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(colorScheme == .dark ? .white : .black) // Adjust text color based on color scheme
+                    // Dropdown (Picker) for quantity input
+                    Picker("Quantity", selection: $quantity) {
+                        ForEach(1..<51) { number in
+                            Text("\(number)")
+                                .tag(String(number))
+                                .foregroundColor(colorScheme == .dark ? .white : .black) // Adjust text color based on color scheme
+                                .frame(width: 50, height: 30)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle()) // Makes it a dropdown menu
+                    .frame(width: 80, height: 30)
+                    .foregroundColor(colorScheme == .dark ? .white : .black) // Adjust text color based on color scheme
                     
                     // Add item button
                     Button(action: {

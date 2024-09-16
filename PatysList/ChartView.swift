@@ -24,6 +24,10 @@ struct ChartView: View {
                             .foregroundColor(colorScheme == .dark ? .white : .black) // Dynamic color
                             .opacity(0.3)
                             .frame(width: CGFloat(Float(item.quantity) ?? 0), height: 20)
+                        Spacer()
+                        Text(item.quantity)
+                            .foregroundColor(colorScheme == .dark ? .white : .black) // Dynamic color
+                            .opacity(0.3)
                     }
                     .swipeActions {
                         // Swipe action to delete the item
