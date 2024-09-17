@@ -62,8 +62,10 @@ struct ContentView: View {
                         
                     }) {
                         Text("Name")
+                            .foregroundColor(colorScheme == .dark ? .gray : .black)
                             .font(.headline)
                             .frame(maxWidth: .infinity)
+                            .padding(.leading)
                     }
 
                     Button(action: {
@@ -76,6 +78,7 @@ struct ContentView: View {
                         
                     }) {
                         Text("Quantity")
+                            .foregroundColor(colorScheme == .dark ? .gray : .black) // Adjust
                             .font(.headline)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .padding(.trailing)
@@ -157,7 +160,7 @@ struct ContentView: View {
             CoreDataManager.shared.saveTempItem(i: newItem)
             
             self.newItem = ""
-            self.quantity = ""
+            self.quantity = "1"
             
             // Refocus on the newItem TextField after adding an item
             isNewItemFocused = true
