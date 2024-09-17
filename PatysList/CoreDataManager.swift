@@ -27,7 +27,9 @@ class CoreDataManager {
             var newItem:[ItemType] = []
 
             for i in items {
-                newItem.append(ItemType(id:i.id!, timestamp: i.timestamp!, name: i.name!, quantity: String(i.quantity), checked: i.checked, indexVal: Int(i.indexVal)))
+                let capitalizedFirstLetter = i.name!.prefix(1).uppercased() + i.name!.dropFirst()
+
+                newItem.append(ItemType(id: i.id!, timestamp: i.timestamp!, name: capitalizedFirstLetter, quantity: String(i.quantity), checked: i.checked, indexVal: Int(i.indexVal)))
             }
 
             return newItem

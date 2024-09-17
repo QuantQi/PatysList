@@ -3,13 +3,17 @@ import SwiftUI
 struct ContentView: View {
     @State private var shoppingList: [ItemType] = CoreDataManager.shared.fetchTempItems()
     @State private var newItem: String = ""
-    @State private var quantity: String = ""
+    @State private var quantity: String = "1"
     
     // Access the system's color scheme (light or dark)
     @Environment(\.colorScheme) var colorScheme
     
     // Declare a focus state for the newItem TextField
     @FocusState private var isNewItemFocused: Bool
+    @State private var isNameSortedAscending = true
+    @State private var isQuantitySortedAscending = true
+    
+
 
     var body: some View {
         NavigationView {
@@ -46,11 +50,43 @@ struct ContentView: View {
                     }
                 }
                 .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.gray.opacity(0.1)) // Adjust background color
-                
+
+                // Column headers
+                HStack {
+                    Button(action: {
+                        // Toggle sorting by name
+                        
+                         isNameSortedAscending ? shoppingList.sort{$0.name < $1.name}: shoppingList.sort{$0.name > $1.name}
+                        
+                        isNameSortedAscending.toggle()
+                        
+                    }) {
+                        Text("Name")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                    }
+
+                    Button(action: {
+                        // Toggle sorting by quantity
+                        
+                        isQuantitySortedAscending ? shoppingList.sort{Int($0.quantity)! < Int($1.quantity)!}:
+                            shoppingList.sort{Int($0.quantity)! > Int($1.quantity)!}
+                        
+                        isQuantitySortedAscending.toggle()
+                        
+                    }) {
+                        Text("Quantity")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.trailing)
+                    }
+                }
+                .padding(.bottom, 5)
+
                 // Shopping list
                 List {
                     ForEach($shoppingList) { $item in
-                        HStack {
+                        HStack{
                             // 1. Radio button for checked status
                             Button(action: {
                                 item.checked.toggle()
