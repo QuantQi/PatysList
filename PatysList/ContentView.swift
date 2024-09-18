@@ -62,12 +62,12 @@ struct ContentView: View {
                         
                     }) {
                         Text("Name")
-                            .foregroundColor(colorScheme == .dark ? .gray : .black)
                             .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.leading)
-                    }
-
+                            
+                        Image(systemName: !isNameSortedAscending ? "arrow.up" : "arrow.down").font(.footnote)
+                    }.padding(.leading)
+                        .frame(maxWidth: .infinity)
+                    Spacer()
                     Button(action: {
                         // Toggle sorting by quantity
                         
@@ -78,12 +78,12 @@ struct ContentView: View {
                         
                     }) {
                         Text("Quantity")
-                            .foregroundColor(colorScheme == .dark ? .gray : .black) // Adjust
                             .font(.headline)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .padding(.trailing)
-                    }
+                        Image(systemName: !isQuantitySortedAscending ? "arrow.up" : "arrow.down").font(.footnote)
+                    }.padding(.trailing)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
+                .foregroundColor(colorScheme == .dark ? .gray : .black) // Adjust
                 .padding(.bottom, 5)
 
                 // Shopping list
@@ -108,7 +108,7 @@ struct ContentView: View {
                             // 3. Quantity text
                             TextField(item.quantity, text: $item.quantity)
                                 .frame(width: 30, height: 30)
-                                .foregroundColor(colorScheme == .dark ? .white : .black) // Adjust quantity text color
+                                .foregroundColor(colorScheme == .dark ? .white : .gray) // Adjust quantity text color
                         }
                     }
                     .onDelete { indexSet in
